@@ -1,9 +1,11 @@
 
 from __future__ import absolute_import, division, print_function
-#from bokeh.plotting import figure, output_file, show
+from bokeh.plotting import figure, output_file, show
 from keras.models import Sequential
 from keras.layers import Dense
 from keras import regularizers
+from keras.callbacks import ModelCheckpoint
+import matplotlib.pyplot as plt
 # import tensorflow as tf currently no support for tensorflow manually install(make sure pc  supports tensorlfow)
 import pandas as pd 
 import os
@@ -91,17 +93,21 @@ class MODEL():
     def kr_train_DNN_Seq_03(self,x_dim ,features_train ,features_test, labels_train , labels_test, batch_size):
         # create model
         model = Sequential()
-        model.add(Dense(10, input_dim=x_dim, init='uniform',kernel_regularizer=regularizers.l2(0.01),activity_regularizer=regularizers.l2(0.005), activation='relu'))
-        model.add(Dense(20, init='uniform',kernel_regularizer=regularizers.l2(0.015),activity_regularizer=regularizers.l1(0.02), activation='relu'))
-        model.add(Dense(20, init='uniform', activation='relu'))
+        model.add(Dense(5, input_dim=x_dim, init='uniform',kernel_regularizer=regularizers.l2(0.01),activity_regularizer=regularizers.l2(0.005), activation='relu'))
+        model.add(Dense(10, init='uniform',kernel_regularizer=regularizers.l2(0.015),activity_regularizer=regularizers.l1(0.02), activation='relu'))
+        model.add(Dense(10, init='uniform', activation='relu'))
         model.add(Dense(1, init='uniform', activation='relu'))                                                                                                                                                                                                                
         # Compile model
         model.compile(loss='mean_squared_logarithmic_error', optimizer='adam',
         metrics=['accuracy'])
+        # checkpoint
+        filepath="weights-improvement-{epoch:02d}-{val_accuracy:.2f}.hdf5"
+        checkpoint = ModelCheckpoint(filepath, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max')
+        callbacks_list = [checkpoint]
         # Model Summary
         model.summary()
         # Fit the model
-        history = model.fit(features_train, labels_train, epochs=100, batch_size=batch_size, verbose=2)
+        history = model.fit(features_train, labels_train,validation_split=0.2 ,epochs=100, batch_size=batch_size,callbacks=callbacks_list, verbose=2)
         model_yaml = model.to_yaml()
         with open("seq03_model.yaml", "w") as yaml_file:
             yaml_file.write(model_yaml)
@@ -118,6 +124,23 @@ class MODEL():
         #line_graph = figure()
         #line_graph.line([history.history['acc']], [history.history['val_acc']])
         #show(line_graph)
-	
+
+        # Plot training & validation accuracy values
+        #plt.plot(history.history['acc'])
+        #plt.plot(history.history['val_acc'])
+        #plt.title('Model accuracy')
+        #plt.ylabel('Accuracy')
+        #plt.xlabel('Epoch')
+        #plt.legend(['Train', 'Test'], loc='upper left')
+        #plt.show()
+
+        # Plot training & validation loss values
+        #plt.plot(history.history['loss'])
+        #plt.plot(history.history['val_loss'])
+        #plt.title('Model loss')
+        #plt.ylabel('Loss')
+        #plt.xlabel('Epoch')
+        #plt.legend(['Train', 'Test'], loc='upper left')
+        plt.show()
         return accuracy
  
