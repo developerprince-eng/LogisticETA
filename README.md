@@ -15,6 +15,10 @@ Take note the Dataset is taken from [zindi](zindi.africa) from a closed competit
     2. pip
     3. Virtualenv(python package)
 
+## Warning 
+
+Please make sure you use python version 3.6 or 3.7 because python 3.8 due to the introduction of new features and rendering other features depracted some libraries are not supported in python 3.8, as python is still young,  being released on th 14th of October 2019. We shall work tirelessly with team to see that we update our project to support for python 3.8.
+
 ## Setup & Inference
 
 1. Create Virtual environment.
@@ -47,6 +51,11 @@ or Win32
 
     .\env\Scripts\activate
 
+```
+4. Python Install packages from requirements.txt
+
+```bash 
+    pip install -r requirements.txt
 ```
 
 3. Change KERAS_BACKEND to either tensorflow if you your CPU supports AVX otherwise Shift to theano for leagcy CPU's 
